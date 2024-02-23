@@ -5,40 +5,50 @@ using UnityEngine;
 [System.Serializable]
 public class Item
 {
+    public static readonly int MAX_COUNT = 64;
+    private ItemData itemData;
+
+    public string ID => itemData.ID;
     public string name => itemData.name;
     public Sprite sprite => itemData.ItemSprite;
     public int count { get; private set; }
 
-    ItemData itemData;
-
-    private Item()
-    {
-
-    }
     public Item(ItemData itemData)
     {
         this.itemData = itemData;
         count = 1;
     }
-    public Item Copy()
-    {
-        Item item = new Item(itemData);
-        item.count = count;
-        return item;
-    }
 
-    /*
-     * public Item(string csv)
+    // 같은 아이템을 합치기 위한 함수 : 반환값은 완벽하게 합쳐졌는가?
+    public bool Combine(Item item)
     {
-        // Trim():문자열의 앞 뒤 공백 제거
-        // Split():특정 문자를 기준으로 문자열 자르기.
-        string[] datas = csv.Trim().Split(',');
-        id = datas[0];
-        name = datas[1];
-
-        Sprite[] itemSprites = Resources.LoadAll<Sprite>("Sprites/items");
-        sprite = System.Array.Find(itemSprites, spr => spr.name == datas[2]);
-        count = 1;
+        if (count + item.count <= MAX_COUNT)
+        {
+            // 병합 후 개수가 최대보다 적을 때.
+            count += item.count;
+            item.count = 0;
+            return true;
+        }
+        else
+        {
+            // 병합 후 개수가 최대보다 많을 때.
+            int over = (count + item.count) - MAX_COUNT;
+            count = MAX_COUNT;
+            item.count -= over;
+            return false;
+        }
     }
-     */
+    public bool Substrct(int amount)
+    {
+        if(count - amount <= 0)
+        {
+            count = 0;
+            return true;
+        }
+        else
+        {
+            count -= amount;
+            return false;
+        }
+    }
 }

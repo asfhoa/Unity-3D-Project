@@ -15,6 +15,14 @@ public class BlockObject : MonoBehaviour, IObject<BlockObject>
         ItemData itemData = ItemDB.Instance.GetItemData(id);
         itemData.ApplyTile(planes);
     }
+    public void Destroy()
+    {
+        Action<BlockObject> callback = ((IObject<BlockObject>)this).returnPool;
+        if (callback == null)
+            Destroy(gameObject);
+        else
+            callback(this);
+    }
 
     [ContextMenu("Apply ID")]
     private void Setup()
